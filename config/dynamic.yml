@@ -1,0 +1,35 @@
+tls:
+  certificates:
+    - certFile: /secret/cert.pem
+      keyFile: /secret/key.pem
+      stores: default
+
+http:
+  routers:
+    dashboard:
+      entryPoints:
+        - websecure
+      middlewares:
+        - basicauth
+        - dashboard-redirect
+      service: api@internal
+      rule: PathPrefix(`/dashboard`) || Path(`/`)
+    api:
+      entryPoints:
+        - websecure
+      service: api@internal
+      rule: PathPrefix(`/api`)
+
+  middlewares:
+    basicauth:
+      basicAuth:
+        usersFile: /secret/auth
+    dashboard-redirect:
+      redirectRegex:
+        regex: '^(?:.*:\/\/)?([^:\/]*?\.[^\/]*).*\/dashboard$'
+        replacement: "https://${1}/dashboard/"
+        permanent: true
+
+  serversTransports:
+    docker-transport:
+      insecureSkipVerify: true

@@ -1,0 +1,68 @@
+# docker-compose script to build code-server dev environment.
+#
+# Author : NoUnique (kofmap@gmail.com)
+# Copyright 2021 NoUnique. All Rights Reserved
+
+version: '3.5'
+
+services:
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    environment:
+      - TZ=Asia/Seoul
+    ports:
+      - 8443:443
+    networks:
+      - traefik
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ../config:/etc/traefik
+      - ../secret:/secret
+      - ../log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+  
+  traefik-index:
+    image: gatherf/traefik-index
+    container_name: traefik-index
+    environment:
+      ENDPOINTCONFIGURATION: '{
+          "title": "${USER} services: ",
+          "endpoints": [
+            {
+              "sectionTitle": "sub section for traefik v2.0",
+              "apiUrl": "http://traefik:8080/api/",
+              "blacklist": "^/$$,^/api$$,^/debug$$,^/index$$"
+            }
+          ]
+        }'
+    volumes:
+      - ../traefik-index.patch:/server/diff.patch
+    restart: unless-stopped
+    networks:
+      - traefik
+    depends_on:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.services.${COMPOSE_IMAGE_NAME}.loadbalancer.serversTransport=docker-transport@file
+      - traefik.http.routers.${COMPOSE_IMAGE_NAME}.rule=PathPrefix(`/index`)
+      - traefik.http.routers.${COMPOSE_IMAGE_NAME}.middlewares=${COMPOSE_IMAGE_NAME}-strip
+      - traefik.http.middlewares.${COMPOSE_IMAGE_NAME}-strip.stripprefix.prefixes=/index
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        cd /server
+        patch -p1 < ./diff.patch
+        yarn
+        yarn start
+
+
+networks:
+  traefik:
+    name: traefik
+

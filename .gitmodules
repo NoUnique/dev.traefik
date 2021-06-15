@@ -1,0 +1,3 @@
+[submodule "traefik-index"]
+	path = traefik-index
+	url = https://github.com/fgather/traefik-index.git

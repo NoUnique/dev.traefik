@@ -1,0 +1,81 @@
+Only in traefik-index: app.js
+Only in traefik-index: bin
+Only in traefik-index: Dockerfile
+Only in traefik-index: .git
+Only in traefik-index: .gitignore
+Only in traefik-index: LICENSE
+Only in traefik-index: package.json
+Only in traefik-index/public/stylesheets: style.css
+Only in traefik-index: README.md
+diff -wur '--to-file=traefik-index-modified' traefik-index/routes/index.js traefik-index-modified/routes/index.js
+--- traefik-index/routes/index.js	2021-06-15 18:02:21.355922074 +0900
++++ traefik-index-modified/routes/index.js	2021-06-16 02:22:47.332194523 +0900
+@@ -1,5 +1,6 @@
+ const {
+   extractHostsAndApplyBlacklistFromTraefik2,
++  extractPathPrefixesAndApplyBlacklistFromTraefik2,
+ } = require("../routes/providersParser");
+ const { extractHostsAndApplyBlacklist } = require("../routes/providersParser");
+ let express = require("express");
+@@ -40,7 +41,10 @@
+     sectionTitle += " ( could not obtain endpoint data )";
+   }
+ 
+-  const enrichedHosts = await enrichHostsWithIcons(hosts);
++  //const enrichedHosts = await enrichHostsWithIcons(hosts);
++  const enrichedHosts = hosts.map((host) => {
++    return { host, iconUrl: null }
++  });
+ 
+   return { sectionTitle: sectionTitle, hosts: enrichedHosts };
+ }
+@@ -60,7 +64,8 @@
+       "http/routers?search=&status=&per_page=10000&page=1"
+     );
+     let result = await request(routersUrl);
+-    hosts = extractHostsAndApplyBlacklistFromTraefik2(
++    //hosts = extractHostsAndApplyBlacklistFromTraefik2(
++    hosts = extractPathPrefixesAndApplyBlacklistFromTraefik2(
+       result,
+       endPointConfiguration.blacklist
+     );
+diff -wur '--to-file=traefik-index-modified' traefik-index/routes/providersParser.js traefik-index-modified/routes/providersParser.js
+--- traefik-index/routes/providersParser.js	2021-06-15 18:02:21.355922074 +0900
++++ traefik-index-modified/routes/providersParser.js	2021-06-16 02:57:32.310158792 +0900
+@@ -45,6 +45,19 @@
+             .map(hostRuleString => hostRuleString.split(',')));
+ }
+ 
++function extractPathPrefixesFromRules(rules) {
++
++    return flatten(
++        flatten(rules.filter(rule => rule)
++            .filter(rule => rule.startsWith('PathPrefix'))
++            .map(rule => rule.match(/^PathPrefix:([A-Za-z0-9\-./,]+)$|^PathPrefix\(`([A-Za-z0-9\-./,]+)`\)/))
++            .map(prefixmatches => {
++                if (prefixmatches) return prefixmatches.slice(1);
++            }))
++            .filter(rule => rule)
++            .map(prefixRuleString => prefixRuleString.split(',')));
++}
++
+ function applyBlacklist(hostNames, blacklistString) {
+     let blacklist = blacklistString === '' ? [] : blacklistString.split(',');
+     let blacklistRegExps = blacklist.map(regExString => new RegExp(regExString));
+@@ -60,6 +73,12 @@
+     return applyBlacklist(hostNames, blacklistString).map(value => "http://" + value);
+ };
+ 
++exports.extractPathPrefixesAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
++    let rules = extractRulesFromTraefik2(routersJson);
++    let pathPrefixes = extractPathPrefixesFromRules(rules);
++    return applyBlacklist(pathPrefixes, blacklistString).map(value => value);
++};
++
+ exports.extractHostsAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
+     let rules = extractRulesFromTraefik2(routersJson);
+ 
+Only in traefik-index: test
+Only in traefik-index: views
+Only in traefik-index: Windows.Dockerfile
+Only in traefik-index: yarn.lock
