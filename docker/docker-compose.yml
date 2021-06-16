@@ -28,13 +28,14 @@ services:
     image: gatherf/traefik-index
     container_name: traefik-index
     environment:
+      HOSTNAME: ${HOSTNAME}
       ENDPOINTCONFIGURATION: '{
           "title": "${USER} services: ",
           "endpoints": [
             {
-              "sectionTitle": "sub section for traefik v2.0",
+              "sectionTitle": "services on ${HOSTNAME}",
               "apiUrl": "http://traefik:8080/api/",
-              "blacklist": "^/$$,^/api$$,^/debug$$,^/index$$"
+              "blacklist": "^/$$,^/api$$,^/debug$$"
             }
           ]
         }'
@@ -48,10 +49,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
-      - traefik.http.services.${COMPOSE_IMAGE_NAME}.loadbalancer.serversTransport=docker-transport@file
-      - traefik.http.routers.${COMPOSE_IMAGE_NAME}.rule=PathPrefix(`/index`)
-      - traefik.http.routers.${COMPOSE_IMAGE_NAME}.middlewares=${COMPOSE_IMAGE_NAME}-strip
-      - traefik.http.middlewares.${COMPOSE_IMAGE_NAME}-strip.stripprefix.prefixes=/index
+      - traefik.http.routers.${COMPOSE_IMAGE_NAME}.rule=Path(`/`)
     entrypoint:
       - /bin/sh
       - -c

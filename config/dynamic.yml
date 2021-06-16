@@ -13,7 +13,7 @@ http:
         - basicauth
         - dashboard-redirect
       service: api@internal
-      rule: PathPrefix(`/dashboard`) || Path(`/`)
+      rule: PathPrefix(`/dashboard`)
     api:
       entryPoints:
         - websecure

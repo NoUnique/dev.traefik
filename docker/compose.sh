@@ -17,6 +17,7 @@ DIRNAME="${PROJECT_DIR##*/}"
 
 # by docker image & container naming rules
 COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:="$(echo "${DIRNAME}" | sed 's/^[^0-9a-zA-Z]//g; s/[^0-9a-zA-Z_.-]//g; s/[_.-]/-/g' | tr '[A-Z]' '[a-z]')"}
+export HOSTNAME=${HOSTNAME}
 export COMPOSE_IMAGE_NAME=${COMPOSE_PROJECT_NAME}
 COMPOSE_PROJECT_NAME="${USER}_${COMPOSE_PROJECT_NAME}"
 
