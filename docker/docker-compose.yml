@@ -7,7 +7,7 @@ version: '3.5'
 
 services:
   traefik:
-    image: traefik:v2.4
+    image: traefik:v2.4.8
     container_name: traefik
     environment:
       - TZ=Asia/Seoul
@@ -27,7 +27,7 @@ services:
       - host.docker.internal:${HOSTBRIDGE_IP}
   
   traefik-index:
-    image: gatherf/traefik-index
+    image: gatherf/traefik-index:dependabot_npm_and_yarn_pug-3.0.1
     container_name: traefik-index
     environment:
       ENDPOINTCONFIGURATION: '{
