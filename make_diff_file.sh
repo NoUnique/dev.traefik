@@ -5,5 +5,6 @@ cd ${PATH_WORKSPACE}
 
 
 TARGET=traefik-index
-diff -wur --to-file=${TARGET}-modified ${TARGET} > ${TARGET}.patch
+cd ${TARGET}
+diff -wur --to-file=modified original > ../${TARGET}.patch
 

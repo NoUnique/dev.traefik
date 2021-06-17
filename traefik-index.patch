@@ -1,15 +1,15 @@
-Only in traefik-index: app.js
-Only in traefik-index: bin
-Only in traefik-index: Dockerfile
-Only in traefik-index: .git
-Only in traefik-index: .gitignore
-Only in traefik-index: LICENSE
-Only in traefik-index: package.json
-Only in traefik-index/public/stylesheets: style.css
-Only in traefik-index: README.md
-diff -wur '--to-file=traefik-index-modified' traefik-index/routes/index.js traefik-index-modified/routes/index.js
---- traefik-index/routes/index.js	2021-06-15 18:02:21.355922074 +0900
-+++ traefik-index-modified/routes/index.js	2021-06-16 02:22:47.332194523 +0900
+Only in original: app.js
+Only in original: bin
+Only in original: Dockerfile
+Only in original: .git
+Only in original: .gitignore
+Only in original: LICENSE
+Only in original: package.json
+Only in original: public
+Only in original: README.md
+diff -wur '--to-file=modified' original/routes/index.js modified/routes/index.js
+--- original/routes/index.js	2021-06-18 01:56:21.625416347 +0900
++++ modified/routes/index.js	2021-06-18 01:55:05.176111585 +0900
 @@ -1,5 +1,6 @@
  const {
    extractHostsAndApplyBlacklistFromTraefik2,
@@ -39,9 +39,9 @@ diff -wur '--to-file=traefik-index-modified' traefik-index/routes/index.js traef
        result,
        endPointConfiguration.blacklist
      );
-diff -wur '--to-file=traefik-index-modified' traefik-index/routes/providersParser.js traefik-index-modified/routes/providersParser.js
---- traefik-index/routes/providersParser.js	2021-06-15 18:02:21.355922074 +0900
-+++ traefik-index-modified/routes/providersParser.js	2021-06-16 02:57:32.310158792 +0900
+diff -wur '--to-file=modified' original/routes/providersParser.js modified/routes/providersParser.js
+--- original/routes/providersParser.js	2021-06-18 01:56:21.625416347 +0900
++++ modified/routes/providersParser.js	2021-06-18 01:55:05.176111585 +0900
 @@ -45,6 +45,19 @@
              .map(hostRuleString => hostRuleString.split(',')));
  }
@@ -75,7 +75,7 @@ diff -wur '--to-file=traefik-index-modified' traefik-index/routes/providersParse
  exports.extractHostsAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
      let rules = extractRulesFromTraefik2(routersJson);
  
-Only in traefik-index: test
-Only in traefik-index: views
-Only in traefik-index: Windows.Dockerfile
-Only in traefik-index: yarn.lock
+Only in original: test
+Only in original: views
+Only in original: Windows.Dockerfile
+Only in original: yarn.lock
