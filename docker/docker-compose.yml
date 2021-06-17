@@ -23,12 +23,13 @@ services:
       - ../log:/var/log
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
+    extra_hosts:
+      - host.docker.internal:${HOSTBRIDGE_IP}
   
   traefik-index:
     image: gatherf/traefik-index
     container_name: traefik-index
     environment:
-      HOSTNAME: ${HOSTNAME}
       ENDPOINTCONFIGURATION: '{
           "title": "${USER} services: ",
           "endpoints": [
@@ -49,6 +50,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
+      - traefik.http.services.${COMPOSE_IMAGE_NAME}.loadbalancer.serversTransport=docker-transport@file
       - traefik.http.routers.${COMPOSE_IMAGE_NAME}.rule=Path(`/`)
     entrypoint:
       - /bin/sh

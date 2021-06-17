@@ -17,7 +17,7 @@ DIRNAME="${PROJECT_DIR##*/}"
 
 # by docker image & container naming rules
 COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:="$(echo "${DIRNAME}" | sed 's/^[^0-9a-zA-Z]//g; s/[^0-9a-zA-Z_.-]//g; s/[_.-]/-/g' | tr '[A-Z]' '[a-z]')"}
-export HOSTNAME=${HOSTNAME}
+
 export COMPOSE_IMAGE_NAME=${COMPOSE_PROJECT_NAME}
 COMPOSE_PROJECT_NAME="${USER}_${COMPOSE_PROJECT_NAME}"
 
@@ -93,6 +93,7 @@ function fn_down() {
 function fn_main() {
     fn_configure
     fn_upgrade_compose
+    fn_set_env
     if [[ "${DO_DOWN}" == "TRUE" ]]; then
         fn_down
     elif [[ "${DO_KILL}" == "TRUE" ]]; then
@@ -126,6 +127,19 @@ function fn_upgrade_compose() {
         fi
     fi
 }
+
+function fn_install_jq() {
+    if ! command -v jq &> /dev/null; then
+        sudo apt -qq install -y jq
+    fi
+}
+
+function fn_set_env() {
+    fn_install_jq
+    export HOSTNAME=${HOSTNAME}
+    export HOSTBRIDGE_IP=$(docker network inspect bridge | jq --raw-output .[0].IPAM.Config[0].Gateway)
+}
+
 
 optspec=":bdrks-:"
 while getopts "${optspec}" optchar; do
