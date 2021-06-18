@@ -1,7 +1,7 @@
 tls:
   certificates:
-    - certFile: /secret/cert.pem
-      keyFile: /secret/key.pem
+    - certFile: /run/secrets/cert.pem
+      keyFile: /run/secrets/key.pem
       stores: default
 
 http:
@@ -23,7 +23,7 @@ http:
   middlewares:
     basicauth:
       basicAuth:
-        usersFile: /secret/auth
+        usersFile: /run/secrets/basic-auth
     dashboard-redirect:
       redirectRegex:
         regex: '^(?:.*:\/\/)?([^:\/]*?\.[^\/]*).*\/dashboard$'
