@@ -1,3 +1,6 @@
 [submodule "traefik-index"]
 	path = traefik-index/original
 	url = https://github.com/fgather/traefik-index.git
+[submodule ".devcontainer"]
+	path = .devcontainer
+	url = git@github.com:NoUnique/.devcontainer.git

@@ -2,3 +2,5 @@ secrets/*
 !secrets/.gitkeep
 log/*
 !log/.gitkeep
+cert_key.tar*
+.env
