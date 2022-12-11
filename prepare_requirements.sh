@@ -18,4 +18,3 @@ rm -f cert_key.tar
 USERNAME=${USER}
 HASHED_PASSWORD=$(openssl passwd -apr1)
 echo "${USER}:${HASHED_PASSWORD}" > ./${DIR_SECRET}/basic-auth
-
