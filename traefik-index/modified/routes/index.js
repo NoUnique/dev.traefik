@@ -1,6 +1,5 @@
 const {
-  extractHostsAndApplyBlacklistFromTraefik2,
-  extractPathPrefixesAndApplyBlacklistFromTraefik2,
+  extractPathsAndPathPrefixesAndApplyBlacklistFromTraefik2,
 } = require("../routes/providersParser");
 const { extractHostsAndApplyBlacklist } = require("../routes/providersParser");
 let express = require("express");
@@ -64,8 +63,7 @@ async function getHostsForEndpoint(endPointConfiguration) {
       "http/routers?search=&status=&per_page=10000&page=1"
     );
     let result = await request(routersUrl);
-    //hosts = extractHostsAndApplyBlacklistFromTraefik2(
-    hosts = extractPathPrefixesAndApplyBlacklistFromTraefik2(
+    hosts = extractPathsAndPathPrefixesAndApplyBlacklistFromTraefik2(
       result,
       endPointConfiguration.blacklist
     );

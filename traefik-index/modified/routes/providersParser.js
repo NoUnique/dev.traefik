@@ -45,12 +45,38 @@ function extractHostsFromRules(rules) {
             .map(hostRuleString => hostRuleString.split(',')));
 }
 
+function extractPathsFromRules(rules) {
+
+    return flatten(
+        flatten(rules.filter(rule => rule)
+            .filter(rule => rule.startsWith('Path'))
+            .map(rule => rule.match(/^Path:([A-Za-z0-9\-./,]+)$|^Path\(`([A-Za-z0-9\-./,]+)`\)/))
+            .map(prefixmatches => {
+                if (prefixmatches) return prefixmatches.slice(1);
+            }))
+            .filter(rule => rule)
+            .map(prefixRuleString => prefixRuleString.split(',')));
+}
+
 function extractPathPrefixesFromRules(rules) {
 
     return flatten(
         flatten(rules.filter(rule => rule)
             .filter(rule => rule.startsWith('PathPrefix'))
             .map(rule => rule.match(/^PathPrefix:([A-Za-z0-9\-./,]+)$|^PathPrefix\(`([A-Za-z0-9\-./,]+)`\)/))
+            .map(prefixmatches => {
+                if (prefixmatches) return prefixmatches.slice(1);
+            }))
+            .filter(rule => rule)
+            .map(prefixRuleString => prefixRuleString.split(',')));
+}
+
+function extractPathsAndPathPrefixesFromRules(rules) {
+
+    return flatten(
+        flatten(rules.filter(rule => rule)
+            .filter(rule => rule.startsWith('Path'))
+            .map(rule => rule.match(/^Path:([A-Za-z0-9\-./,]+)$|^Path\(`([A-Za-z0-9\-./,]+)`\)|^PathPrefix:([A-Za-z0-9\-./,]+)$|^PathPrefix\(`([A-Za-z0-9\-./,]+)`\)/))
             .map(prefixmatches => {
                 if (prefixmatches) return prefixmatches.slice(1);
             }))
@@ -73,10 +99,22 @@ exports.extractHostsAndApplyBlacklist = (providersJson, blacklistString) => {
     return applyBlacklist(hostNames, blacklistString).map(value => "http://" + value);
 };
 
+exports.extractPathsAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
+    let rules = extractRulesFromTraefik2(routersJson);
+    let pathPrefixes = extractPathsFromRules(rules);
+    return applyBlacklist(pathPrefixes, blacklistString).map(value => value);
+};
+
 exports.extractPathPrefixesAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
     let rules = extractRulesFromTraefik2(routersJson);
     let pathPrefixes = extractPathPrefixesFromRules(rules);
     return applyBlacklist(pathPrefixes, blacklistString).map(value => value);
+};
+
+exports.extractPathsAndPathPrefixesAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
+    let rules = extractRulesFromTraefik2(routersJson);
+    let pathsAndPathPrefixes = extractPathsAndPathPrefixesFromRules(rules);
+    return applyBlacklist(pathsAndPathPrefixes, blacklistString).map(value => value);
 };
 
 exports.extractHostsAndApplyBlacklistFromTraefik2 = (routersJson, blacklistString) => {
